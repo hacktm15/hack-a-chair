@@ -1,5 +1,5 @@
 #define MAX_READS  10
-#define SENSORS  5
+#define SENSORS  6
 
 #include "SoftwareSerial.h";
 int bluetoothTx = 3;
@@ -7,7 +7,7 @@ int bluetoothRx = 2;
 
 SoftwareSerial bluetooth(bluetoothTx, bluetoothRx);
 
-// tt tm tb bl br
+// tt tm tb bl br bending
 
 // declare the pins
 int tt = A0;
@@ -15,6 +15,7 @@ int tm = A1;
 int tb = A2;
 int bl = A3;
 int br = A4;
+int bending = A5;
 int ledTx = 10;
 long values[SENSORS];
 
@@ -26,6 +27,7 @@ void setup() {
   pinMode(tb, INPUT);
   pinMode(bl, INPUT);
   pinMode(br, INPUT);
+  pinMode(bending, INPUT);
   pinMode(ledTx, OUTPUT);
 }
 
@@ -35,6 +37,7 @@ void loop() {
   values[2] = analogRead(tb);
   values[3] = analogRead(bl);
   values[4] = analogRead(br);
+  values[5] = analogRead(bending);
   bluetooth.print(values[0]);
   bluetooth.print(',');
   bluetooth.print(values[1]);
@@ -44,6 +47,8 @@ void loop() {
   bluetooth.print(values[3]);
   bluetooth.print(',');
   bluetooth.print(values[4]);
+  bluetooth.print(',');
+  bluetooth.print(values[5]);
   bluetooth.print('\n');
   
   digitalWrite(ledTx, HIGH);
