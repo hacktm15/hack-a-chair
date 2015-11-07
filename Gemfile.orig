@@ -3,9 +3,16 @@ source 'https://rubygems.org'
 gem 'serialport'
 gem 'em-websocket'
 gem 'json'
+<<<<<<< HEAD
+gem 'sqlite3'
+gem 'pry'
+gem 'terminal-notifier'
+gem 'libnotify'
+=======
 # gem 'sqlite3'
 gem 'pry'
 gem 'serialport'
 gem 'pg'
 gem 'activesupport'
 gem 'mongoid'
+>>>>>>> reader
