@@ -1,0 +1,59 @@
+h1 {
+  text-align: center;
+  margin: 50px 0;
+}
+
+.wrapper {
+  width: 900px;
+  margin: 0 auto;
+}
+
+.good-position, .bad-position {
+  width: 450px;
+  float: left;
+  position: relative;
+}
+
+.good-position img, .bad-position img{
+  width: 200px;
+  margin: 0 auto;
+  display: block;
+}
+
+.good-position img {
+  margin-top: -8px;
+}
+
+.good-position h2, .bad-position h2{
+  margin: 25px 0;
+  font-size: 25px;
+  text-align: center;
+}
+
+.position .tt, .position .tm, .position .tb,  .position .bl, .position .br  {
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  position: absolute;
+  top: 170px;
+  right: 286px;
+  background-color: #cacaca;
+}
+
+.position .tm {
+  top: 210px;
+}
+
+.position .tb {
+  top: 240px;
+}
+
+.position .bl {
+  top: 280px;
+  right: 220px;
+}
+
+.position .br {
+  top: 280px;
+  right: 200px;
+}
