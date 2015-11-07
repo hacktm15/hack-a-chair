@@ -7,8 +7,7 @@ class Notification
     elsif Os.linux?
       exec(build_notification(title, message, picture))
     elsif Os.windows?
-      # NotImplementedError
-      exec(build_notification(title, message, picture))
+      NotImplementedError
     end
   end
 
