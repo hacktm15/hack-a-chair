@@ -1,8 +1,6 @@
 require './os'
 class Notification
 
-  #absolute url for images
-
   def send(title, message, link = nil, picture= nil)
     if Os.mac?
       exec(build_mac_notification(title, message, link, picture))
@@ -26,7 +24,7 @@ class Notification
   def build_ubuntu_notification(title, message, picture = nil)
     command = "notify-send #{title} #{message} "
     if picture
-      command += "-i #{picture}"
+      command += "--icon #{picture}"
     end
   end
 
@@ -36,5 +34,9 @@ class Notification
 
 end
 
+#absolute url for images
+#for ubuntu local image mandatory, does not work well for remote pictures
+
 a = Notification.new
-a.send('Hack-A-Chair', 'Whatever', 'http://google.com', 'http://alturl.com/wjdmg')
+# a.send('Hack-A-Chair', 'Whatever', 'http://google.com', 'http://alturl.com/wjdmg')
+# a.send('Hack-A-Chair', 'Whatever', 'http://google.com', '/home/lavinia/projects/hack-a-chair/test.ico')

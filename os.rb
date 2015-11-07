@@ -12,6 +12,6 @@ class Os
   end
 
   def self.linux?
-    OS.unix? and not OS.mac?
+    Os.unix? and not Os.mac?
   end
 end
