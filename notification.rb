@@ -5,9 +5,9 @@ class Notification
     if Os.mac?
       exec(build_mac_notification(title, message, link, picture))
     elsif Os.linux?
-      exec(build_notification(title, message, picture))
+      exec(build_ubuntu_notification(title, message, picture))
     elsif Os.windows?
-      NotImplementedError
+      exec(build_win_notification(title, message))
     end
   end
 
@@ -21,18 +21,24 @@ class Notification
     end
   end
 
-  def build_notification(title, message, picture = nil)
+  def build_ubuntu_notification(title, message, picture = nil)
     command = "notify-send #{title} #{message} "
     if picture
       command += "--icon #{picture}"
     end
   end
 
+  def build_win_notification(title, message)
+    command = "notify-send.exe #{title} #{message} "
+  end
+
 end
 
 #absolute url for images
 #for ubuntu local image mandatory, does not work well for remote pictures
+#images don't work in win, at least not for now
 
 a = Notification.new
-a.send('Hack-A-Chair', 'Whatever', 'http://google.com', 'http://alturl.com/wjdmg')
-a.send('Hack-A-Chair', 'Whatever', 'http://google.com', '/home/lavinia/projects/hack-a-chair/test.ico')
+# a.send('Hack-A-Chair', 'Whatever', 'http://google.com', 'http://alturl.com/wjdmg')
+# a.send('Hack-A-Chair', 'Whatever', 'http://google.com', '/home/lavinia/projects/hack-a-chair/test.ico')
+# a.send('Hack-A-Chair', 'Whatever')
