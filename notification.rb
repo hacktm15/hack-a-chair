@@ -1,4 +1,5 @@
-require './os'
+require_relative 'os'
+
 class Notification
 
   def send(title, message, link = nil, picture= nil)
@@ -39,6 +40,6 @@ end
 #images don't work in win, at least not for now
 
 a = Notification.new
-# a.send('Hack-A-Chair', 'Whatever', 'http://google.com', 'http://alturl.com/wjdmg')
-# a.send('Hack-A-Chair', 'Whatever', 'http://google.com', '/home/lavinia/projects/hack-a-chair/test.ico')
-# a.send('Hack-A-Chair', 'Whatever')
+a.send('Hack-A-Chair', 'Whatever', 'http://google.com', 'http://alturl.com/wjdmg')
+a.send('Hack-A-Chair', 'Whatever', 'http://google.com', '/home/lavinia/projects/hack-a-chair/test.ico')
+a.send('Hack-A-Chair', 'Whatever')

@@ -21,17 +21,18 @@
       <div class="br" style="background-color: green;"></div>
     </div>
     <div class="bad-position position">
-      <h2>Bad Position</h2>
+      <h2>Your Position</h2>
       <img src="assets/images/bad.png" alt="">
-      <div class="tt" style="background-color: {{getState(reads[0])}};"></div>
-      <div class="tm" style="background-color: {{getState(reads[1])}};"></div>
-      <div class="tb" style="background-color: {{getState(reads[2])}};"></div>
-      <div class="bl" style="background-color: {{getState(reads[3])}};"></div>
-      <div class="br" style="background-color: {{getState(reads[4])}};"></div>
+      <div class="tt" style="background-color: {{reads.top_back > 100 ? 'green' : 'green'}};"></div>
+      <div class="tm" style="background-color: {{reads.middle_back > 100 ? 'green' : 'green'}};"></div>
+      <div class="tb" style="background-color: {{reads.bottom_back > 100 ? 'green' : 'green'}};"></div>
+      <div class="bl" style="background-color: {{reads.left_seat > 100 ? 'green' : 'green'}};"></div>
+      <div class="br" style="background-color: {{reads.right_seat > 100 ? 'green' : 'green'}};"></div>
     </div>
   </div>
-  
+  <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
 <script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
