@@ -3,26 +3,16 @@ angular.module('chair', [])
     $scope.reads = {top_back: 0, middle_back: 0, bottom_back: 0, left_seat: 0, right_seat: 0, angle: 0};
 
     $scope.getState = function(value) {
-      debugger
       return value < 100 ? 'red' : 'green';
     }
 
-    Pusher.log = function(message) {
-      if (window.console && window.console.log) {
-        window.console.log(message);
-      }
-    };
+    var socket = io('http://localhost:3000');
 
-    var pusher = new Pusher('4f590f24ee5575090891', {
-      encrypted: true
-    });
-
-    var channel = pusher.subscribe('sensors');
-    channel.bind('read', function(data) {
-      $scope.reads = data;
-      process_data(data);
-      console.log($scope.reads);
-    });
+    socket.on('front:update', function(data){
+      console.log(data);
+      $scope.reads = JSON.parse(data.sensor_data);
+      process_data($scope.reads);
+    })
 
     function process_data(data) {
       if(data.top_back > 0)
@@ -30,27 +20,27 @@ angular.module('chair', [])
       else 
         $('.bad-position .tt').css('background-color', 'red');
 
-      if(data.middle_back > 10)
+      if(data.middle_back > 35)
         $('.bad-position .tm').css('background-color', 'green');
       else 
         $('.bad-position .tm').css('background-color', 'red');
 
-      if(data.bottom_back > 10)
+      if(data.bottom_back > 35)
         $('.bad-position .tb').css('background-color', 'green');
       else 
         $('.bad-position .tb').css('background-color', 'red');
 
-      if(data.left_seat > 100)
+      if(data.left_seat > 35)
         $('.bad-position .bl').css('background-color', 'green');
       else 
         $('.bad-position .bl').css('background-color', 'red');
 
-      if(data.right_seat > 100)
+      if(data.right_seat > 35)
         $('.bad-position .br').css('background-color', 'green');
       else 
         $('.bad-position .br').css('background-color', 'red');
 
-      if (data.top_back > 0 && data.middle_back > 10 && data.bottom_back > 10 && data.left_seat > 100 && data.right_seat > 100)
+      if (data.top_back > 0 && data.middle_back > 35 && data.bottom_back > 35 && data.left_seat > 35 && data.right_seat > 35)
         $(".bad-position img").attr("src", "assets/images/good.png");
       else 
         $(".bad-position img").attr("src", "assets/images/bad.png");

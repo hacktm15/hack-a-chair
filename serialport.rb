@@ -12,7 +12,7 @@ require 'active_support'
 require 'pry'
 require 'mongoid'
 require 'em-websocket'
-require 'pusher'
+require 'socket.io-client-simple'
 
 require_relative 'utils'
 require_relative 'reading'
@@ -29,7 +29,7 @@ data_bits = 8
 stop_bits = 1
 parity = SerialPort::NONE
 
-Pusher.url = "https://4f590f24ee5575090891:81f94b6c412a5559016e@api.pusherapp.com/apps/152936"
+socket = SocketIO::Client::Simple.connect 'http://localhost:3000'
 
 Mongo::Logger.logger       = ::Logger.new('mongo.log')
 Mongo::Logger.logger.level = ::Logger::INFO
@@ -40,11 +40,12 @@ last_notification_time = Time.now
 @sensors = {}
 
 pusher_proc = Proc.new do 
-  Pusher.trigger('sensors', 'read', @sensors.to_json)
+  # Pusher.trigger('sensors', 'read', @sensors.to_json)
+  socket.emit :read, {:sensor_data => @sensors.to_json, :at => Time.now}
 end
 
 mongo_proc = Proc.new do 
-  Reading.create(@sensors)
+  # Reading.create(@sensors)
 end
 
 begin
@@ -104,10 +105,10 @@ begin
           puts "standing"
         end
       end
-      if (time_now - last_notification_time).to_i > NOTIFICATION_PERIOD && errors.present?
-        # notification.send errors
-        last_notification_time = time_now
-      end
+      # if (time_now - last_notification_time).to_i > NOTIFICATION_PERIOD && errors.present?
+      #   # notification.send errors
+      #   last_notification_time = time_now
+      # end
     end
   end
 rescue SystemExit, Interrupt
