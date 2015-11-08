@@ -1,75 +1,60 @@
 angular.module('chair', [])
   .controller('MainController', ['$scope', function($scope){
+    // default variable
     $scope.reads = {top_back: 0, middle_back: 0, bottom_back: 0, left_seat: 0, right_seat: 0, angle: 0};
+    $scope.your_image = "assets/images/good.png";
+    var socket = io('http://localhost:3000');
+    var isNotOnChair = false;
+
+    // Images 
+    var spatar_w = "assets/images/adjust_spatar.svg";
+    var empty = "assets/images/empty.svg";
+    var chair_w = "assets/images/chair_w.svg";
+    var foot_w = "assets/images/foot_w.svg";
+    var good = "assets/images/good.svg";
+
+    // ranges
+    var angle_left_bound = 130;
+    var angle_right_bound = 160;
+    var error_range = 30;
 
     $scope.getState = function(value) {
-      return value < 100 ? 'red' : 'green';
+      return isNotOnChair ? '#cacaca' : value < error_range ? 'red' : 'green';
     }
-
-    $scope.your_image = "assets/images/good.png";
-
-    $scope.$watch('reads', function(newVal){
-      // if (newVal) {
-      //   if (newVal.top_back == 0 && newVal.middle_back == 0 && newVal.bottom_back == 0 && newVal.left_seat == 0 && newVal.right_seat == 0) {
-      //     $scope.your_image = "assets/images/empty.png";
-      //   } else {
-      //     $scope.your_image = "assets/images/good.png";
-      //   }
-      // } 
-    });
-
-    var socket = io('http://localhost:3000');
 
     socket.on('front:update', function(data){
       console.log(data);
       $scope.reads = JSON.parse(data.sensor_data);
       process_data($scope.reads);
-    })
-
-    function process_leds(data) {
-      if(data.top_back > 0)
-        $('.bad-position .tt').css('background-color', 'green');
-      else 
-        $('.bad-position .tt').css('background-color', 'red');
-
-      if(data.middle_back > 35)
-        $('.bad-position .tm').css('background-color', 'green');
-      else 
-        $('.bad-position .tm').css('background-color', 'red');
-
-      if(data.bottom_back > 35)
-        $('.bad-position .tb').css('background-color', 'green');
-      else 
-        $('.bad-position .tb').css('background-color', 'red');
-
-      if(data.left_seat > 35)
-        $('.bad-position .bl').css('background-color', 'green');
-      else 
-        $('.bad-position .bl').css('background-color', 'red');
-
-      if(data.right_seat > 35)
-        $('.bad-position .br').css('background-color', 'green');
-      else 
-        $('.bad-position .br').css('background-color', 'red');
-    }
+      $scope.$apply();
+    });
 
     function notOnChair(data) {
-      return data.top_back < 30 && data.middle_back < 30 && data.bottom_back < 30 && data.left_seat < 30 && data.right_seat < 30;
+      return (data.top_back < error_range && data.middle_back < error_range && data.bottom_back < error_range && data.left_seat < error_range && data.right_seat < error_range);
+    }
+
+    function backError(data) {
+      return data.top_back < error_range || data.middle_back < error_range || data.bottom_back < error_range;
+    }
+
+    function seatError(data) {
+      return data.left_seat < error_range || data.right_seat < error_range;
     }
 
     function process_data(data) {
-      process_leds(data);
+      isNotOnChair = false;
       
-      if ((data.angle < 130 || data.angle > 160) && !notOnChair(data)) {
-        $(".bad-position img").attr("src", "assets/images/adjust_spatar.svg");
+      if ((data.angle < angle_left_bound || data.angle > angle_right_bound) && !notOnChair(data)) {
+        $(".bad-position img").attr("src", spatar_w);
       } else if (notOnChair(data)) {
-        $(".bad-position img").attr("src", "assets/images/empty.svg");
-      }  else if (data.top_back < 30 || data.middle_back < 30 || data.bottom_back < 30 ) {
-        $(".bad-position img").attr("src", "assets/images/chair_w.svg");
-      } else if (data.left_seat < 30 || data.right_seat < 30) {
-        $(".bad-position img").attr("src", "assets/images/foot_w.svg");
+        isNotOnChair = true;
+        $(".bad-position img").attr("src", empty);
+      }  else if (backError(data) ) {
+        $(".bad-position img").attr("src", chair_w);
+      } else if (seatError(data)) {
+        $(".bad-position img").attr("src", foot_w);
       } else {
-        $(".bad-position img").attr("src", "assets/images/good.svg");
+        $(".bad-position img").attr("src", good);
       }
     }
 
