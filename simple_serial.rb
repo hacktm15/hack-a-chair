@@ -9,7 +9,7 @@
 
 require 'serialport'
 
-port_str = '/dev/rfcomm0' 
+port_str = '/dev/cu.RNBT-E153-RNI-SPP' 
 baud_rate = 57600
 data_bits = 8
 stop_bits = 1

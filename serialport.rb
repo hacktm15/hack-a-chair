@@ -12,6 +12,8 @@ require 'active_support'
 require 'pry'
 require 'mongoid'
 require 'em-websocket'
+require 'socket.io-client-simple'
+
 require_relative 'utils'
 require_relative 'reading'
 require_relative 'notification'
@@ -28,6 +30,11 @@ baud_rate = 57600
 data_bits = 8
 stop_bits = 1
 parity = SerialPort::NONE
+
+socket = SocketIO::Client::Simple.connect 'http://localhost:3000'
+
+Mongo::Logger.logger       = ::Logger.new('mongo.log')
+Mongo::Logger.logger.level = ::Logger::INFO
 
 sp = SerialPort.new(port_str, baud_rate, data_bits, stop_bits, parity)
 last_notification_time = Time.now
@@ -51,6 +58,7 @@ begin
       angle = sensor_data[5].to_i
 
       reading = {top_back: top_back, middle_back: middle_back, bottom_back: bottom_back, left_seat: left_seat, right_seat: right_seat, angle: angle}
+      socket.emit :read, {:sensor_data => @sensors.to_json, :at => Time.now}
 
       Reading.create(reading)
       back_errors = Utils.get_back_errors(top_back, middle_back, bottom_back)

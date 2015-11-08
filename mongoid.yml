@@ -1,4 +1,4 @@
-development:
+production:
   clients:
     default:
       database: digichair
