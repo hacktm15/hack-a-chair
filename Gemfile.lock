@@ -17,9 +17,12 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
     eventmachine (1.0.8)
+    ffi (1.9.10)
     http_parser.rb (0.6.0)
     i18n (0.7.0)
     json (1.8.3)
+    libnotify (0.9.1)
+      ffi (>= 1.0.11)
     method_source (0.8.2)
     minitest (5.8.2)
     mongo (2.1.2)
@@ -48,6 +51,7 @@ DEPENDENCIES
   activesupport
   em-websocket
   json
+  libnotify
   mongoid
   pg
   pry
