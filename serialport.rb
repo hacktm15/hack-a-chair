@@ -60,8 +60,12 @@ begin
         errors.merge!(seat_errors)
       end
 
+      angle_notif = false
       unless ANGLE.include? angle
-        Notification.show_notification('Angle', 'Incorect back!')
+        unless angle_notif
+          Notification.show_notification('Angle', 'Incorect back!')
+          angle_notif = true
+        end
       end
 
       score = Utils.get_overall_score(sensor_data)
@@ -93,6 +97,7 @@ begin
           message = Message.posture_message(errors)
           Notification.show_notification('Error!', message)
           last_notification_time = time_now
+          angle_notif = false
         end
       end
     end
