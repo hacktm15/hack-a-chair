@@ -8,8 +8,8 @@ require_relative 'notification'
 require_relative 'message'
 
 PERMITTED_RANGE = 10
-ANGLE = 155..190
-NOTIFICATION_PERIOD = 10
+ANGLE = 130..160
+NOTIFICATION_PERIOD = 100
 
 Mongoid.load!("mongoid.yml", :production)
 
@@ -61,7 +61,7 @@ begin
       end
 
       unless ANGLE.include? angle
-        # Incorect angle
+        Notification.show_notification('Angle', 'Incorect back!')
       end
 
       score = Utils.get_overall_score(sensor_data)
