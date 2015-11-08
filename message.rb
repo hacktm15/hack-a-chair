@@ -1,3 +1,5 @@
+require './notifications'
+
 class Message
   TOP    = 'cervical'
   MIDDLE = 'thoracic'
@@ -13,14 +15,18 @@ class Message
       :right  => RIGHT
   }
 
-  def self.fix_position(positions)
-    test = []
-    positions.each do |position, value|
+  def self.posture_message(postures)
+    arr = []
+    postures.each do |posture, value|
       if value
-        test.push(SECTIONS[position])
+        arr.push(SECTIONS[posture])
       end
     end
-    "Correct your posture #{test.join(', ')}"
+    "Correct your posture #{arr.join(', ')}"
+    # a = Notification.new
+    # a.show_notification("You should", "Correct your posture #{arr.join(', ')}")
   end
 
 end
+
+# Message.posture_message({:top => true, :middle => false, :bottom => true})
