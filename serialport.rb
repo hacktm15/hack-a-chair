@@ -19,6 +19,7 @@ require_relative 'reading'
 
 PERMITTED_RANGE = 10
 ANGLE = 165..190
+NOTIFICATION_PERIOD = 60
 
 Mongoid.load!("mongoid.yml", :production)
 
@@ -28,12 +29,23 @@ data_bits = 8
 stop_bits = 1
 parity = SerialPort::NONE
 
-Pusher.url = "https://a20f1cdf04ebda07f351:4456b1ee7c822eab3e31@api.pusherapp.com/apps/152879"
+Pusher.url = "https://4f590f24ee5575090891:81f94b6c412a5559016e@api.pusherapp.com/apps/152936"
 
 Mongo::Logger.logger       = ::Logger.new('mongo.log')
 Mongo::Logger.logger.level = ::Logger::INFO
 
 sp = SerialPort.new(port_str, baud_rate, data_bits, stop_bits, parity)
+last_notification_time = Time.now
+
+@sensors = {}
+
+pusher_proc = Proc.new do 
+  Pusher.trigger('sensors', 'read', @sensors.to_json)
+end
+
+mongo_proc = Proc.new do 
+  Reading.create(@sensors)
+end
 
 begin
   while true do
@@ -52,10 +64,11 @@ begin
       br = sensor_data[4].to_i
       angle = sensor_data[5].to_i
 
-      sensors = {top_back: tt, middle_back: tm, bottom_back: tb, left_seat: bl, right_seat: br, angle: angle}
-      # Reading.create(sensors)
-      Pusher.trigger('sensors', 'read', sensors.to_json)
-      # puts sensors.to_s
+      @sensors = {top_back: tt, middle_back: tm, bottom_back: tb, left_seat: bl, right_seat: br, angle: angle}
+      # separate proccess to not delay the loop
+      fork { mongo_proc.call }
+      fork { pusher_proc.call }
+      # puts @sensors.to_s
 
       back_errors = Utils.get_back_errors(sensor_data[0].to_i, sensor_data[1].to_i, sensor_data[2].to_i)
 
@@ -90,6 +103,10 @@ begin
           sit_time = nil
           puts "standing"
         end
+      end
+      if (time_now - last_notification_time).to_i > NOTIFICATION_PERIOD && errors.present?
+        # notification.send errors
+        last_notification_time = time_now
       end
     end
   end

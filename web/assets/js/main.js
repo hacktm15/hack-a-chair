@@ -13,7 +13,7 @@ angular.module('chair', [])
       }
     };
 
-    var pusher = new Pusher('a20f1cdf04ebda07f351', {
+    var pusher = new Pusher('4f590f24ee5575090891', {
       encrypted: true
     });
 
@@ -25,17 +25,17 @@ angular.module('chair', [])
     });
 
     function process_data(data) {
-      if(data.top_back > 100)
+      if(data.top_back > 0)
         $('.bad-position .tt').css('background-color', 'green');
       else 
         $('.bad-position .tt').css('background-color', 'red');
 
-      if(data.middle_back > 100)
+      if(data.middle_back > 10)
         $('.bad-position .tm').css('background-color', 'green');
       else 
         $('.bad-position .tm').css('background-color', 'red');
 
-      if(data.bottom_back > 100)
+      if(data.bottom_back > 10)
         $('.bad-position .tb').css('background-color', 'green');
       else 
         $('.bad-position .tb').css('background-color', 'red');
@@ -50,15 +50,10 @@ angular.module('chair', [])
       else 
         $('.bad-position .br').css('background-color', 'red');
 
-      if (data.top_back > 100 && data.middle_back > 100 && data.bottom_back > 100 && data.left_seat > 100 && data.right_seat > 100)
+      if (data.top_back > 0 && data.middle_back > 10 && data.bottom_back > 10 && data.left_seat > 100 && data.right_seat > 100)
         $(".bad-position img").attr("src", "assets/images/good.png");
       else 
         $(".bad-position img").attr("src", "assets/images/bad.png");
-
-      // angular.element('.tm').style('background-color')
-      // angular.element('.tb').style('background-color')
-      // angular.element('.bl').style('background-color')
-      // angular.element('.br').style('background-color')
     }
 
   }]);
