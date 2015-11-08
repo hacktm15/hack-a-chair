@@ -2,11 +2,11 @@ require 'terminal-notifier'
 
 class NotificationMac
 
-  def send(message, link = nil, picture= nil)
+  def send(title, message, link = nil, picture= nil)
     TerminalNotifier.notify(
         message,
-        :title => 'ChairAware',
-        :open  => link,
+        :title   => title,
+        :open    => link,
         :appIcon => picture
     )
   end
