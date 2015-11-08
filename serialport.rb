@@ -39,14 +39,14 @@ last_notification_time = Time.now
 
 @sensors = {}
 
-pusher_proc = Proc.new do 
-  # Pusher.trigger('sensors', 'read', @sensors.to_json)
-  socket.emit :read, {:sensor_data => @sensors.to_json, :at => Time.now}
-end
+# pusher_proc = Proc.new do 
+#   # Pusher.trigger('sensors', 'read', @sensors.to_json)
+#   socket.emit :read, {:sensor_data => @sensors.to_json, :at => Time.now}
+# end
 
-mongo_proc = Proc.new do 
-  # Reading.create(@sensors)
-end
+# mongo_proc = Proc.new do 
+#   # Reading.create(@sensors)
+# end
 
 begin
   while true do
@@ -66,9 +66,7 @@ begin
       angle = sensor_data[5].to_i
 
       @sensors = {top_back: tt, middle_back: tm, bottom_back: tb, left_seat: bl, right_seat: br, angle: angle}
-      # separate proccess to not delay the loop
-      fork { mongo_proc.call }
-      fork { pusher_proc.call }
+      socket.emit :read, {:sensor_data => @sensors.to_json, :at => Time.now}
       # puts @sensors.to_s
 
       back_errors = Utils.get_back_errors(sensor_data[0].to_i, sensor_data[1].to_i, sensor_data[2].to_i)

@@ -6,6 +6,18 @@ angular.module('chair', [])
       return value < 100 ? 'red' : 'green';
     }
 
+    $scope.your_image = "assets/images/good.png";
+
+    $scope.$watch('reads', function(newVal){
+      // if (newVal) {
+      //   if (newVal.top_back == 0 && newVal.middle_back == 0 && newVal.bottom_back == 0 && newVal.left_seat == 0 && newVal.right_seat == 0) {
+      //     $scope.your_image = "assets/images/empty.png";
+      //   } else {
+      //     $scope.your_image = "assets/images/good.png";
+      //   }
+      // } 
+    });
+
     var socket = io('http://localhost:3000');
 
     socket.on('front:update', function(data){
@@ -13,6 +25,7 @@ angular.module('chair', [])
       $scope.reads = JSON.parse(data.sensor_data);
       process_data($scope.reads);
     })
+
 
     function process_data(data) {
       if(data.top_back > 0)
@@ -40,10 +53,20 @@ angular.module('chair', [])
       else 
         $('.bad-position .br').css('background-color', 'red');
 
-      if (data.top_back > 0 && data.middle_back > 35 && data.bottom_back > 35 && data.left_seat > 35 && data.right_seat > 35)
-        $(".bad-position img").attr("src", "assets/images/good.png");
-      else 
-        $(".bad-position img").attr("src", "assets/images/bad.png");
+      if (data.top_back < 30 && data.middle_back < 30 && data.bottom_back < 30 && data.left_seat < 30 && data.right_seat < 30) {
+        $(".bad-position img").attr("src", "assets/images/empty.svg");
+      }  else if (data.top_back < 30 || data.middle_back < 30 || data.bottom_back < 30 ) {
+        $(".bad-position img").attr("src", "assets/images/chair_w.svg");
+      } else if (data.left_seat < 30 || data.right_seat < 30) {
+        $(".bad-position img").attr("src", "assets/images/foot_w.svg");
+      } else {
+        $(".bad-position img").attr("src", "assets/images/good.svg");
+      }
+
+      // if (data.top_back > 0 && data.middle_back > 35 && data.bottom_back > 35 && data.left_seat > 35 && data.right_seat > 35)
+      //   $(".bad-position img").attr("src", "assets/images/good.svg");
+      // else 
+      //   $(".bad-position img").attr("src", "assets/images/bad.png");
     }
 
   }]);

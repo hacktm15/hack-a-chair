@@ -1,11 +1,19 @@
-h1 {
-  text-align: center;
-  margin: 50px 0;
+body {
+  background-color: #2c3e50;
+}
+
+header img {
+  width: 600px;
+  margin: 0 auto;
+  display: block;
 }
 
 .wrapper {
   width: 900px;
   margin: 0 auto;
+  background-color: #fafafa;
+  overflow: auto;
+  border-radius: 10px;
 }
 
 .good-position, .bad-position {
@@ -15,13 +23,9 @@ h1 {
 }
 
 .good-position img, .bad-position img{
-  width: 200px;
+  width: 270px;
   margin: 0 auto;
   display: block;
-}
-
-.good-position img {
-  margin-top: -8px;
 }
 
 .good-position h2, .bad-position h2{
@@ -35,25 +39,25 @@ h1 {
   height: 10px;
   border-radius: 100%;
   position: absolute;
-  top: 170px;
-  right: 286px;
+  top: 220px;
+  right: 283px;
   background-color: #cacaca;
 }
 
 .position .tm {
-  top: 210px;
+  top: 250px;
 }
 
 .position .tb {
-  top: 240px;
+  top: 290px;
 }
 
 .position .bl {
-  top: 280px;
+  top: 335px;
   right: 220px;
 }
 
 .position .br {
-  top: 280px;
+  top: 335px;
   right: 200px;
 }
