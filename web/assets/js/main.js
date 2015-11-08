@@ -26,8 +26,7 @@ angular.module('chair', [])
       process_data($scope.reads);
     })
 
-
-    function process_data(data) {
+    function process_leds(data) {
       if(data.top_back > 0)
         $('.bad-position .tt').css('background-color', 'green');
       else 
@@ -52,8 +51,18 @@ angular.module('chair', [])
         $('.bad-position .br').css('background-color', 'green');
       else 
         $('.bad-position .br').css('background-color', 'red');
+    }
 
-      if (data.top_back < 30 && data.middle_back < 30 && data.bottom_back < 30 && data.left_seat < 30 && data.right_seat < 30) {
+    function notOnChair(data) {
+      return data.top_back < 30 && data.middle_back < 30 && data.bottom_back < 30 && data.left_seat < 30 && data.right_seat < 30;
+    }
+
+    function process_data(data) {
+      process_leds(data);
+      
+      if ((data.angle < 130 || data.angle > 160) && !notOnChair(data)) {
+        $(".bad-position img").attr("src", "assets/images/adjust_spatar.svg");
+      } else if (notOnChair(data)) {
         $(".bad-position img").attr("src", "assets/images/empty.svg");
       }  else if (data.top_back < 30 || data.middle_back < 30 || data.bottom_back < 30 ) {
         $(".bad-position img").attr("src", "assets/images/chair_w.svg");
@@ -62,11 +71,6 @@ angular.module('chair', [])
       } else {
         $(".bad-position img").attr("src", "assets/images/good.svg");
       }
-
-      // if (data.top_back > 0 && data.middle_back > 35 && data.bottom_back > 35 && data.left_seat > 35 && data.right_seat > 35)
-      //   $(".bad-position img").attr("src", "assets/images/good.svg");
-      // else 
-      //   $(".bad-position img").attr("src", "assets/images/bad.png");
     }
 
   }]);
