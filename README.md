@@ -22,4 +22,4 @@ The project offers support for scheduled/on demand reports in terms of:
 Development details:
 
 1. Hardware: Arduino, pressure sensors, bending sensors
-2. Software: Ruby, Mongo, Angular, Push notifications
+2. Software: Ruby, Mongo, Angular, NodeJS with Socket.io
