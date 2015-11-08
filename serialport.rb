@@ -14,10 +14,12 @@ require 'mongoid'
 require 'em-websocket'
 require_relative 'utils'
 require_relative 'reading'
+require_relative 'notification'
+require_relative 'message'
 
 PERMITTED_RANGE = 10
 ANGLE = 165..190
-NOTIFICATION_PERIOD = 600
+NOTIFICATION_PERIOD = 10
 
 Mongoid.load!("mongoid.yml", :development)
 
@@ -29,6 +31,7 @@ parity = SerialPort::NONE
 
 sp = SerialPort.new(port_str, baud_rate, data_bits, stop_bits, parity)
 last_notification_time = Time.now
+errors = {}
 
 begin
   while true do
@@ -40,29 +43,29 @@ begin
       end
       time_now = Time.now
 
-      tt = sensor_data[0].to_i
-      tm = sensor_data[1].to_i      
-      tb = sensor_data[2].to_i
-      bl = sensor_data[3].to_i
-      br = sensor_data[4].to_i
+      top_back = sensor_data[0].to_i
+      middle_back = sensor_data[1].to_i      
+      bottom_back = sensor_data[2].to_i
+      left_seat = sensor_data[3].to_i
+      right_seat = sensor_data[4].to_i
       angle = sensor_data[5].to_i
 
-      reading = {top_back: tt, middle_back: tm, bottom_back: tb, left_seat: bl, right_seat: br, angle: angle}
+      reading = {top_back: top_back, middle_back: middle_back, bottom_back: bottom_back, left_seat: left_seat, right_seat: right_seat, angle: angle}
 
       Reading.create(reading)
-      back_errors = Utils.get_back_errors(sensor_data[0].to_i, sensor_data[1].to_i, sensor_data[2].to_i)
+      back_errors = Utils.get_back_errors(top_back, middle_back, bottom_back)
 
       if back_errors.key(true)
-        puts "back_error!"
+        errors.merge!(back_errors)
       end
 
-      seat_errors = Utils.get_seat_errors(sensor_data[3].to_i, sensor_data[4].to_i)
+      seat_errors = Utils.get_seat_errors(left_seat, right_seat)
       if seat_errors.key(true)
-        puts "seat_errors!"
+        errors.merge!(seat_errors)
       end
 
-      unless ANGLE.include? sensor_data[5]
-        puts "angle error! #{sensor_data[5]}"
+      unless ANGLE.include? angle
+        puts "angle error! #{angle}"
       end
 
       score = Utils.get_overall_score(sensor_data)
@@ -71,23 +74,30 @@ begin
         sit_time ||= time_now
         if (time_now - sit_time).to_i > 10
           stand_time = nil
-          puts "siting"
+          # Sitting
         end
 
         if (time_now - sit_time).to_i > 30
-          puts "take a break"
-          #notification.send instant
+          # Sitting for 50 min
+          take_a_break_time ||= time_now
+          if (time_now - take_a_break_time).to_i > 30
+            Notification.show_notification('Take 10', 'You\'ve been sitting for 50 minutes')
+            take_a_break_time = time_now
+          end
         end
       else
         stand_time ||= time_now
         if (time_now - stand_time).to_i > 10
           sit_time = nil
-          puts "standing"
+          # Standing
         end
       end
-      if (time_now - last_notification_time).to_i > NOTIFICATION_PERIOD && errors.present?
-        #notification.send errors
-        last_notification_time = time_now
+      if (time_now - last_notification_time).to_i > NOTIFICATION_PERIOD
+        unless errors.empty?
+          message = Message.posture_message(errors)
+          Notification.show_notification('Error!', message)
+          last_notification_time = time_now
+        end
       end
     end
   end

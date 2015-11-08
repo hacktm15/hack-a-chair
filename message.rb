@@ -1,5 +1,3 @@
-require './notifications'
-
 class Message
   TOP    = 'cervical'
   MIDDLE = 'thoracic'
@@ -22,11 +20,8 @@ class Message
         arr.push(SECTIONS[posture])
       end
     end
+
     "Correct your posture #{arr.join(', ')}"
-    # a = Notification.new
-    # a.show_notification("You should", "Correct your posture #{arr.join(', ')}")
   end
 
 end
-
-# Message.posture_message({:top => true, :middle => false, :bottom => true})
