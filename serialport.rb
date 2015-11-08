@@ -17,6 +17,7 @@ require_relative 'reading'
 
 PERMITTED_RANGE = 10
 ANGLE = 165..190
+NOTIFICATION_PERIOD = 600
 
 Mongoid.load!("mongoid.yml", :development)
 
@@ -27,6 +28,7 @@ stop_bits = 1
 parity = SerialPort::NONE
 
 sp = SerialPort.new(port_str, baud_rate, data_bits, stop_bits, parity)
+last_notification_time = Time.now
 
 begin
   while true do
@@ -45,8 +47,9 @@ begin
       br = sensor_data[4].to_i
       angle = sensor_data[5].to_i
 
-      Reading.create(top_back: tt, middle_back: tm, bottom_back: tb, left_seat: bl, right_seat: br, angle: angle)
+      reading = {top_back: tt, middle_back: tm, bottom_back: tb, left_seat: bl, right_seat: br, angle: angle}
 
+      Reading.create(reading)
       back_errors = Utils.get_back_errors(sensor_data[0].to_i, sensor_data[1].to_i, sensor_data[2].to_i)
 
       if back_errors.key(true)
@@ -73,6 +76,7 @@ begin
 
         if (time_now - sit_time).to_i > 30
           puts "take a break"
+          #notification.send instant
         end
       else
         stand_time ||= time_now
@@ -80,6 +84,10 @@ begin
           sit_time = nil
           puts "standing"
         end
+      end
+      if (time_now - last_notification_time).to_i > NOTIFICATION_PERIOD && errors.present?
+        #notification.send errors
+        last_notification_time = time_now
       end
     end
   end
