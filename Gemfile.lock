@@ -81,6 +81,3 @@ DEPENDENCIES
   serialport
   socket.io-client-simple
   terminal-notifier
-
-BUNDLED WITH
-   1.10.6

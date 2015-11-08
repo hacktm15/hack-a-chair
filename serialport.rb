@@ -1,17 +1,5 @@
-# tt,tm,tb,bl,br
-
-	# tt
-
-	# tm
-
-	# tb
- #  bl   br
-
 require 'serialport'
-require 'active_support'
-require 'pry'
 require 'mongoid'
-require 'em-websocket'
 require 'socket.io-client-simple'
 
 require_relative 'utils'
@@ -20,10 +8,10 @@ require_relative 'notification'
 require_relative 'message'
 
 PERMITTED_RANGE = 10
-ANGLE = 165..190
+ANGLE = 155..190
 NOTIFICATION_PERIOD = 10
 
-Mongoid.load!("mongoid.yml", :development)
+Mongoid.load!("mongoid.yml", :production)
 
 port_str = '/dev/rfcomm0' 
 baud_rate = 57600
@@ -58,7 +46,7 @@ begin
       angle = sensor_data[5].to_i
 
       reading = {top_back: top_back, middle_back: middle_back, bottom_back: bottom_back, left_seat: left_seat, right_seat: right_seat, angle: angle}
-      socket.emit :read, {:sensor_data => @sensors.to_json, :at => Time.now}
+      socket.emit :read, {:sensor_data => reading.to_json, :at => Time.now}
 
       Reading.create(reading)
       back_errors = Utils.get_back_errors(top_back, middle_back, bottom_back)
@@ -73,7 +61,7 @@ begin
       end
 
       unless ANGLE.include? angle
-        puts "angle error! #{angle}"
+        # Incorect angle
       end
 
       score = Utils.get_overall_score(sensor_data)
